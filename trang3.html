@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta charset giúp xác định mã hóa ký tự (UTF-8) để hỗ trợ đầy đủ các ký tự đặc biệt -->
+    <meta charset="UTF-8" />
+    <!-- Meta viewport giúp trang web đáp ứng trên các thiết bị di động -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pause Menu</title>
+    <style>
+      /* Cấu hình cho toàn bộ trang */
+      body {
+        font-family: "Arial", sans-serif; /* Phông chữ */
+        background-color: #0288d1; /* Màu nền của trang */
+        display: flex; /* Dùng Flexbox để căn giữa nội dung */
+        justify-content: center; /* Căn giữa theo chiều ngang */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        height: 100vh; /* Chiều cao 100% cửa sổ */
+        margin: 0; /* Loại bỏ khoảng cách mặc định */
+      }
+
+      /* Thiết kế cho menu pause */
+      .pause-menu {
+        background-color: white; /* Màu nền của menu pause */
+        padding: 30px; /* Khoảng cách xung quanh nội dung */
+        border-radius: 10px; /* Bo góc menu */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
+        text-align: center; /* Căn giữa nội dung trong menu */
+      }
+
+      /* Cấu hình cho tiêu đề trong menu pause */
+      .pause-menu h2 {
+        color: #0277bd; /* Màu sắc tiêu đề */
+        font-size: 24px; /* Kích thước chữ */
+      }
+
+      /* Thiết kế cho các nút trong menu */
+      .pause-menu button {
+        background-color: #0277bd; /* Màu nền của nút */
+        color: white; /* Màu chữ */
+        padding: 15px 30px; /* Khoảng cách trong nút */
+        border: none; /* Bỏ viền mặc định */
+        border-radius: 8px; /* Bo góc nút */
+        cursor: pointer; /* Chỉnh con trỏ chuột khi hover */
+        font-size: 18px; /* Kích thước chữ trong nút */
+        margin: 10px; /* Khoảng cách giữa các nút */
+      }
+
+      /* Hiệu ứng khi hover lên nút */
+      .pause-menu button:hover {
+        background-color: #01579b; /* Màu nền khi hover */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Menu Pause -->
+    <div class="pause-menu">
+      <!-- Tiêu đề của menu -->
+      <h2>Game Paused</h2>
+      <!-- Các nút chức năng -->
+      <button id="resumeButton">Resume</button> <!-- Nút tiếp tục trò chơi -->
+      <button id="restartButton">Restart</button> <!-- Nút chơi lại trò chơi -->
+      <button id="exitButton">Exit</button> <!-- Nút thoát trò chơi -->
+    </div>
+
+    <script>
+      // Sự kiện cho nút "Resume" (Tiếp tục trò chơi)
+      document
+        .getElementById("resumeButton")
+        .addEventListener("click", function () {
+          // Quay lại trang chơi và giữ nguyên trạng thái đã lưu
+          window.location.href = "trang2.html"; 
+        });
+
+      // Sự kiện cho nút "Restart" (Chơi lại trò chơi)
+      document
+        .getElementById("restartButton")
+        .addEventListener("click", function () {
+          // Xóa tất cả dữ liệu lưu trữ (thời gian, trạng thái trò chơi)
+          localStorage.removeItem("timeLeft"); // Xóa thời gian còn lại
+          localStorage.removeItem("matchedPairs"); // Xóa số cặp đã ghép
+          localStorage.removeItem("allCardsState"); // Xóa trạng thái các ô
+          // Quay lại trang chơi, bắt đầu lại trò chơi từ đầu
+          window.location.href = "trang2.html"; 
+        });
+
+      // Sự kiện cho nút "Exit" (Thoát trò chơi)
+      document
+        .getElementById("exitButton")
+        .addEventListener("click", function () {
+          // Xóa tất cả dữ liệu lưu trữ
+          localStorage.removeItem("timeLeft"); // Xóa thời gian còn lại
+          localStorage.removeItem("matchedPairs"); // Xóa số cặp đã ghép
+          localStorage.removeItem("allCardsState"); // Xóa trạng thái các ô
+          // Quay lại trang chính (trang khởi đầu)
+          window.location.href = "trang1.html"; 
+        });
+    </script>
+  </body>
+</html>

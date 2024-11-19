@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Trang 1</title>
+    <style>
+      /* Thiết lập chung cho toàn bộ trang */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background-image: url("anhnen.jpg"); /* Đặt đường dẫn ảnh nền tại đây */
+        background-size: cover;  /* Đảm bảo ảnh nền phủ toàn bộ màn hình */
+        background-position: center; /* Canh giữa ảnh nền */
+        background-repeat: no-repeat; /* Không lặp lại ảnh nền */
+        display: flex; /* Dùng flexbox để căn giữa nội dung */
+        justify-content: center; /* Căn giữa theo chiều ngang */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        height: 100vh; /* Chiều cao toàn bộ màn hình */
+        padding: 20px; /* Padding xung quanh để tránh nội dung chạm mép */
+      }
+
+      .container {
+        background-color: #ffffff; /* Màu nền của container */
+        padding: 30px; /* Khoảng cách giữa nội dung và viền */
+        border-radius: 15px; /* Bo góc cho container */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Đổ bóng cho container */
+        width: 400px; /* Chiều rộng cố định cho container */
+        text-align: center; /* Căn giữa nội dung trong container */
+        box-sizing: border-box; /* Đảm bảo padding không làm thay đổi kích thước */
+      }
+
+      h1 {
+        font-size: 32px; /* Kích thước chữ tiêu đề */
+        color: #0277bd; /* Màu chữ */
+        margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
+        font-weight: bold; /* Làm chữ in đậm */
+        text-transform: uppercase; /* Chuyển chữ thành chữ hoa */
+      }
+
+      p {
+        font-size: 18px; /* Kích thước chữ cho phần mô tả */
+        margin-bottom: 20px; /* Khoảng cách dưới mỗi đoạn văn */
+        color: #333; /* Màu chữ */
+      }
+
+      select {
+        font-size: 16px; /* Kích thước chữ cho dropdown */
+        padding: 10px; /* Khoảng cách trong dropdown */
+        margin-top: 10px; /* Khoảng cách trên dropdown */
+        border-radius: 8px; /* Bo góc cho dropdown */
+        border: 1px solid #0277bd; /* Viền cho dropdown */
+        width: 100%; /* Chiều rộng 100% để phù hợp với container */
+        background-color: #e1f5fe; /* Màu nền của dropdown */
+        transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu nền khi hover */
+      }
+
+      select:hover {
+        background-color: #81d4fa; /* Màu nền khi hover lên dropdown */
+      }
+
+      button {
+        background-color: #0277bd; /* Màu nền của nút */
+        color: #ffffff; /* Màu chữ của nút */
+        padding: 15px 25px; /* Khoảng cách trong nút */
+        border: none; /* Không viền cho nút */
+        border-radius: 8px; /* Bo góc cho nút */
+        font-size: 20px; /* Kích thước chữ của nút */
+        cursor: pointer; /* Đổi con trỏ chuột khi hover */
+        width: 100%; /* Chiều rộng của nút bằng 100% chiều rộng container */
+        margin-top: 20px; /* Khoảng cách trên nút */
+        transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu nền khi hover */
+      }
+
+      button:hover {
+        background-color: #0288d1; /* Màu nền khi hover lên nút */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Dragon Ball GT</h1>
+      <p>
+        Level:
+        <!-- Dropdown menu cho việc chọn mức độ khó -->
+        <select id="levelSelect">
+          <option value="4">Easy (4x4)</option>
+          <option value="6">Hard (6x6)</option>
+        </select>
+      </p>
+      <p>
+        Time:
+        <!-- Dropdown menu cho việc chọn thời gian chơi -->
+        <select id="timeSelect">
+          <option value="1">1 minute</option>
+          <option value="3">3 minutes</option>
+          <option value="5">5 minutes</option>
+        </select>
+      </p>
+      <!-- Nút chơi, khi nhấn sẽ chuyển sang trang khác -->
+      <button id="playButton">Play</button>
+    </div>
+
+    <script>
+      // Lấy các phần tử cần thiết
+      const playButton = document.getElementById("playButton");
+      const levelSelect = document.getElementById("levelSelect");
+      const timeSelect = document.getElementById("timeSelect");
+
+      // Sự kiện khi nhấn nút "Play"
+      playButton.addEventListener("click", function () {
+        // Lưu lựa chọn cấp độ và thời gian vào localStorage
+        localStorage.setItem("selectedLevel", levelSelect.value);
+        localStorage.setItem("selectedTime", timeSelect.value);
+
+        // Chuyển sang trang 2
+        window.location.href = "trang2.html";
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta charset giúp xác định mã hóa ký tự (UTF-8) để hỗ trợ đầy đủ các ký tự đặc biệt -->
+    <meta charset="UTF-8" />
+    <!-- Meta viewport giúp trang web đáp ứng trên các thiết bị di động -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Board</title>
+    <style>
+      /* Cấu hình cho phần thân của trang */
+      body {
+        font-family: "Arial", sans-serif;
+        background-image: url("anhnen.jpg"); /* Đặt hình nền */
+        background-size: cover; /* Làm cho hình nền phủ đầy toàn bộ trang */
+        background-position: center; /* Đảm bảo hình nền nằm ở giữa */
+        display: flex; /* Dùng Flexbox để căn giữa các phần tử */
+        justify-content: center; /* Căn giữa theo chiều ngang */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        height: 100vh; /* Chiều cao bằng 100% chiều cao cửa sổ */
+        margin: 0; /* Loại bỏ khoảng cách mặc định */
+      }
+
+      /* Cấu hình cho bảng trò chơi */
+      .game-board {
+        width: 100%;
+        max-width: 1000px; /* Giới hạn độ rộng tối đa của bảng */
+        height: 600px; /* Chiều cao của bảng */
+        border: 15px solid #0277bd; /* Đường viền của bảng */
+        border-radius: 15px; /* Bo tròn góc bảng */
+        padding: 30px; /* Khoảng cách từ các cạnh đến nội dung bên trong */
+        background-color: #ffffff; /* Màu nền bảng trò chơi */
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ cho bảng */
+        position: relative; /* Để hiển thị modal/game-over trên bảng */
+        overflow: hidden; /* Ngăn chặn các phần tử vượt ra ngoài bảng */
+      }
+
+      /* Phần đầu bảng trò chơi (cấp độ và thời gian) */
+      .header {
+        display: flex; /* Dùng Flexbox để căn đều các phần tử trong header */
+        justify-content: space-between; /* Căn lề trái và phải cho các phần tử */
+        align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+        margin-bottom: 30px; /* Khoảng cách giữa header và bảng */
+        font-size: 20px; /* Kích thước font cho header */
+        position: relative; /* Để vị trí của timer có thể tuyệt đối */
+      }
+
+      /* Cấp độ của trò chơi */
+      .level {
+        font-weight: bold;
+        color: #01579b;
+      }
+
+      /* Hiển thị thời gian */
+      .timer {
+        font-weight: bold;
+        color: #0277bd;
+        position: absolute;
+        right: 50%;
+        transform: translateX(50%); /* Căn giữa timer */
+        font-size: 18px;
+      }
+
+      /* Lưới của các ô trong bảng trò chơi */
+      .grid {
+        display: grid; /* Dùng lưới để chia ô */
+        gap: 8px; /* Khoảng cách giữa các ô */
+        margin-top: 10px;
+        overflow: auto; /* Cuộn nếu cần */
+        height: 92%; /* Chiều cao của lưới */
+      }
+
+      /* Cấu hình cho các ô trong lưới */
+      .grid-cell {
+        border: 1px solid #0277bd; /* Viền của ô */
+        border-radius: 5px; /* Bo góc của ô */
+        background-color: #ffffff;
+        display: flex; /* Dùng Flexbox để căn giữa hình ảnh */
+        justify-content: center;
+        align-items: center;
+        overflow: hidden; /* Giới hạn các hình ảnh không vượt ra ngoài */
+        position: relative;
+        cursor: pointer; /* Con trỏ chuột thay đổi khi hover */
+      }
+
+      /* Cấu hình cho hình ảnh trong các ô */
+      .grid-cell img {
+        width: 100%; /* Làm cho hình ảnh rộng bằng 100% ô */
+        height: 100%; /* Làm cho hình ảnh cao bằng 100% ô */
+        object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
+        border-radius: 5px; /* Bo góc của hình ảnh */
+      }
+
+      /* Hiệu ứng cho các ô khi được chọn */
+      .grid-cell.selected {
+        border: 4px solid #ff9800; /* Viền màu cam dày hơn khi chọn */
+        box-shadow: 0 0 10px rgba(255, 152, 0, 0.7); /* Hiệu ứng phát sáng khi chọn */
+      }
+
+      /* Các ô đã ghép thành công sẽ bị ẩn */
+      .grid-cell.matched {
+        visibility: hidden;
+      }
+
+      /* Modal khi game kết thúc */
+      .game-over {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Căn giữa modal */
+        background-color: rgba(0, 0, 0, 0.8); /* Nền mờ */
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        display: none; /* Ẩn modal khi chưa kết thúc game */
+      }
+
+      /* Nút trong game-over */
+      .game-over button {
+        background-color: #0277bd;
+        color: white;
+        padding: 10px 20px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      /* Hiệu ứng hover cho nút */
+      .game-over button:hover {
+        background-color: #0288d1;
+      }
+
+      /* Nút tạm dừng */
+      .pause-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #0277bd;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      /* Hiệu ứng hover cho nút pause */
+      .pause-button:hover {
+        background-color: #0288d1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-board">
+      <!-- Header với cấp độ và thời gian -->
+      <div class="header">
+        <div class="level" id="levelDisplay"></div> <!-- Cấp độ -->
+        <div class="timer" id="timeDisplay">Time: 00:00</div> <!-- Thời gian -->
+      </div>
+      
+      <!-- Lưới các ô trong trò chơi -->
+      <div class="grid" id="gridContainer"></div>
+      
+      <!-- Nút tạm dừng -->
+      <button class="pause-button" id="pauseButton">Pause</button>
+      
+      <!-- Modal game-over (hiển thị khi trò chơi kết thúc) -->
+      <div class="game-over" id="gameOverMessage">
+        <h2 id="gameOverMessageText"></h2>
+        <button id="replayButton">Replay</button> <!-- Nút replay -->
+        <button id="exitButton">Exit</button> <!-- Nút exit -->
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Lấy thông tin cấp độ từ localStorage
+        const level = localStorage.getItem("selectedLevel");
+        const gridContainer = document.getElementById("gridContainer");
+
+        // Hiển thị cấp độ
+        document.getElementById("levelDisplay").textContent =
+          level == 4 ? "Easy" : level == 6 ? "Hard" : "Unknown";
+
+        // Đặt kích thước lưới dựa trên cấp độ
+        const size = level == 4 ? 4 : 6;
+        gridContainer.style.gridTemplateColumns = `repeat(${size}, 1fr)`;  // Đặt số cột trong lưới
+        gridContainer.style.gridTemplateRows = `repeat(${size}, 1fr)`;     // Đặt số hàng trong lưới
+
+        // Lấy trạng thái trò chơi đã lưu từ localStorage
+        const savedState = JSON.parse(localStorage.getItem("allCardsState"));
+        const images = [];
+
+        if (!savedState) {
+          // Nếu chưa có trạng thái đã lưu, tạo hình ảnh mới ngẫu nhiên
+          const totalPairs = (size * size) / 2;
+          for (let i = 1; i <= totalPairs; i++) {
+            images.push(`images/${i}.jpg`);
+            images.push(`images/${i}.jpg`);
+          }
+          images.sort(() => Math.random() - 0.5); // Xáo trộn hình ảnh
+        } else {
+          // Nếu có trạng thái đã lưu, sử dụng các hình ảnh đã lưu
+          savedState.forEach((cell) => images.push(cell.img));
+        }
+
+        let matchedPairs = 0;  // Đếm số cặp đã ghép thành công
+        let flippedCards = []; // Lưu các thẻ đang được lật
+
+        // Tạo các ô trong lưới với hình ảnh
+        images.forEach((image, index) => {
+          const cell = document.createElement("div");
+          cell.classList.add("grid-cell");
+
+          const img = document.createElement("img");
+          img.src = image;
+
+          // Nếu trạng thái đã lưu, đánh dấu các ô đã ghép thành công
+          if (savedState && savedState[index].matched) {
+            cell.classList.add("matched");
+            matchedPairs++;
+          }
+
+          cell.appendChild(img);
+          gridContainer.appendChild(cell);
+
+          // Xử lý sự kiện click cho mỗi ô
+          cell.addEventListener("click", () => {
+            if (
+              !cell.classList.contains("matched") && 
+              flippedCards.length < 2 && 
+              !cell.classList.contains("selected")
+            ) {
+              // Thêm viền khi thẻ được chọn
+              cell.classList.add("selected");
+              flippedCards.push(cell);
+
+              // Kiểm tra khi hai thẻ đã được lật
+              if (flippedCards.length === 2) {
+                const [first, second] = flippedCards;
+                const firstImage = first.querySelector("img").src;
+                const secondImage = second.querySelector("img").src;
+
+                if (firstImage === secondImage) {
+                  setTimeout(() => {
+                    first.classList.add("matched");
+                    second.classList.add("matched");
+                    flippedCards = [];
+                    matchedPairs++;
+
+                    // Kiểm tra điều kiện kết thúc trò chơi
+                    if (matchedPairs === images.length / 2) {
+                      // Dừng đồng hồ khi người chơi thắng
+                      clearInterval(timer);
+
+                      setTimeout(() => {
+                        document.getElementById("gameOverMessageText").textContent = "You Win!";
+                        document.getElementById("gameOverMessage").style.display = "block"; // Hiển thị màn hình kết thúc
+                      }, 500);
+                    }
+                  }, 600); // Chờ đợi một chút trước khi ẩn cặp đã ghép
+                } else {
+                  setTimeout(() => {
+                    first.classList.remove("selected");
+                    second.classList.remove("selected");
+                    flippedCards = [];
+                  }, 1000); // Đặt lại sau một khoảng thời gian ngắn
+                }
+              }
+            }
+          });
+        });
+
+        // Quản lý thời gian còn lại
+        let timeLeft =
+          localStorage.getItem("timeLeft") ||
+          localStorage.getItem("selectedTime") * 60 ||
+          0;
+        const timeDisplay = document.getElementById("timeDisplay");
+
+        const timer = setInterval(() => {
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            if (matchedPairs !== images.length / 2) {
+              document.getElementById("gameOverMessageText").textContent =
+                "Time's up! You Lose!";
+              document.getElementById("gameOverMessage").style.display = "block";
+            }
+          } else {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timeDisplay.textContent = `Time: ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+            timeLeft--;
+            localStorage.setItem("timeLeft", timeLeft);
+          }
+        }, 1000);
+
+        // Nút tạm dừng
+        const pauseButton = document.getElementById("pauseButton");
+        pauseButton.addEventListener("click", function () {
+          clearInterval(timer);
+
+          const allCardsState = Array.from(gridContainer.children).map(
+            (cell) => ({
+              img: cell.querySelector("img").src,
+              matched: cell.classList.contains("matched"),
+            })
+          );
+          localStorage.setItem("allCardsState", JSON.stringify(allCardsState));
+
+          window.location.href = "trang3.html"; // Chuyển trang khi tạm dừng
+        });
+
+        // Xử lý nút replay (chơi lại)
+        const replayButton = document.getElementById("replayButton");
+        replayButton.addEventListener("click", function () {
+          localStorage.removeItem("timeLeft");
+          localStorage.removeItem("allCardsState");
+          window.location.href = "trang2.html"; // Chuyển lại trang chơi
+        });
+
+        // Xử lý nút exit (thoát)
+        const exitButton = document.getElementById("exitButton");
+        exitButton.addEventListener("click", function () {
+          localStorage.removeItem("timeLeft");
+          localStorage.removeItem("allCardsState");
+          window.location.href = "trang1.html"; // Quay về trang chính
+        });
+      });
+    </script>
+  </body>
+</html>
