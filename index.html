@@ -22,6 +22,7 @@
         align-items: center; /* Căn giữa theo chiều dọc */
         height: 100vh; /* Chiều cao toàn bộ màn hình */
         padding: 20px; /* Padding xung quanh để tránh nội dung chạm mép */
+        position: relative; /* Để có thể sử dụng tuyệt đối vị trí */
       }
 
       .container {
@@ -79,6 +80,20 @@
       button:hover {
         background-color: #0288d1; /* Màu nền khi hover lên nút */
       }
+
+      /* Định vị tên ở góc */
+      .corner-names {
+        position: absolute; /* Đặt ở vị trí tuyệt đối */
+        top: 20px; /* Cách từ đầu trang */
+        left: 20px; /* Cách từ bên trái */
+        color: #ffffff; /* Màu chữ trắng */
+        font-size: 16px; /* Kích thước chữ */
+        font-weight: bold; /* Làm chữ in đậm */
+      }
+
+      .corner-names p {
+        margin: 5px 0; /* Khoảng cách giữa các tên */
+      }
     </style>
   </head>
   <body>
@@ -103,6 +118,13 @@
       </p>
       <!-- Nút chơi, khi nhấn sẽ chuyển sang trang khác -->
       <button id="playButton">Play</button>
+    </div>
+
+    <!-- Phần tên ở góc -->
+    <div class="corner-names">
+      <p>Trương Lê Quân</p>
+      <p>Phan Lê Vỹ</p>
+      <p>Đinh Đạt Luân</p>
     </div>
 
     <script>
